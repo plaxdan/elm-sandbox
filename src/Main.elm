@@ -2,9 +2,9 @@ module Main exposing (Model, Msg(..), init, main, update, view)
 
 import Browser exposing (Document)
 import Browser.Navigation as Navigation exposing (Key)
-import Css exposing (..)
-import Html.Styled exposing (..)
-import Html.Styled.Attributes exposing (css)
+import Element exposing (..)
+import Element.Font as Font
+import Html exposing (Html)
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser)
 
@@ -41,26 +41,29 @@ view model =
             viewNotFound
 
 
+viewLayout : Html msg
+viewLayout =
+    layout [] <|
+        el [ centerX, centerY, padding 50 ] <|
+            paragraph
+                [ Font.size 48, Font.center ]
+                [ text "Welcome to "
+                , el [ Font.italic ] <| text "this"
+                , text " page!"
+                ]
+
+
 viewHome : Document Msg
 viewHome =
     { title = "Elm Starter | Home"
-    , body =
-        [ Html.Styled.toUnstyled <|
-            div
-                [ css [ border3 (px 5) solid (rgb 0 255 0) ]
-                ]
-                [ text "Home Page!" ]
-        ]
+    , body = [ viewLayout ]
     }
 
 
 viewNotFound : Document Msg
 viewNotFound =
     { title = "Elm Starter | Not Found"
-    , body =
-        [ Html.Styled.toUnstyled <|
-            text "Not Found"
-        ]
+    , body = [ layout [] <| text "Not Found" ]
     }
 
 

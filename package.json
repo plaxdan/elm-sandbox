@@ -6,10 +6,9 @@
   "license": "MIT",
   "devDependencies": {
     "@parcel/transformer-elm": "^2.0.0-rc.0",
-    "elm": "^0.19.1-5",
-    "tailwindcss": "^2.2.7"
+    "elm": "^0.19.1-5"
   },
   "scripts": {
-    "dev": "npx parcel src/index.html"
+    "start": "npx parcel src/index.html"
   }
 }
