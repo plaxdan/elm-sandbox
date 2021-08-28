@@ -1,0 +1,22 @@
+{
+  "name": "elm-starter",
+  "private": true,
+  "version": "1.0.0",
+  "author": "Daniel Walker <plaxdan@gmail.com>",
+  "license": "MIT",
+  "source": "src/index.html",
+  "scripts": {
+    "start": "npx parcel",
+    "test": "npx elm-test",
+    "prepare": "husky install"
+  },
+  "devDependencies": {
+    "@fullhuman/postcss-purgecss": "^4.0.3",
+    "@parcel/transformer-elm": "^2.0.0-rc.0",
+    "autoprefixer": "^10.3.2",
+    "elm": "^0.19.1-5",
+    "husky": "^7.0.0",
+    "lint-staged": "^11.1.2",
+    "tailwindcss": "^2.2.7"
+  }
+}
