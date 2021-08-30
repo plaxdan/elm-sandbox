@@ -15,8 +15,10 @@
     "@parcel/transformer-elm": "^2.0.0-rc.0",
     "autoprefixer": "^10.3.2",
     "elm": "^0.19.1-5",
+    "elm-tailwind-modules": "^0.3.2",
     "husky": "^7.0.0",
     "lint-staged": "^11.1.2",
-    "tailwindcss": "^2.2.7"
+    "postcss": "^8.3.6",
+    "tailwindcss": "^2.2.8"
   }
 }

@@ -1,15 +1,23 @@
 module Main exposing (Model, Msg(..), init, main, update, view)
 
+-- import Html.Styled as Html
+-- import Html.Styled.Attributes as Attr
+-- import Tailwind.Breakpoints as Breakpoints
+-- import Html exposing (Html, button, div, p, text)
+
 import Array exposing (Array)
 import Browser exposing (Document)
 import Browser.Navigation as Navigation exposing (Key)
-import Html exposing (Html, button, div, p, text)
-import Html.Attributes exposing (class)
-import Html.Events exposing (onClick)
+import Css
+import Css.Global
+import Html.Styled as Html exposing (Html, button, div, p, text)
+import Html.Styled.Attributes as Attr
+import Html.Styled.Events exposing (onClick)
 import Http
 import Json.Decode exposing (Decoder)
 import Random exposing (Generator)
 import Random.Array
+import Tailwind.Utilities as Tw
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser)
 
@@ -58,15 +66,24 @@ view : Model -> Document Msg
 view model =
     case model.page of
         Just HomePage ->
-            viewHome model
+            viewHomePage model
 
         Nothing ->
-            viewNotFound
+            viewNotFoundPage
 
 
 viewDice : Int -> Html msg
 viewDice int =
-    div [ class "font-mono px-4 py-2 rounded bg-black text-white" ]
+    div
+        [ Attr.css
+            [ Tw.font_mono
+            , Tw.px_4
+            , Tw.py_2
+            , Tw.rounded
+            , Tw.bg_black
+            , Tw.text_white
+            ]
+        ]
         [ text (String.fromInt int) ]
 
 
@@ -75,7 +92,15 @@ viewDiceCard dice =
     viewCard
         [ viewCardTitle "Roll Six Dice"
         , viewButton RollDice "Let's Roll!"
-        , div [ class "grid grid-flow-row grid-cols-3 grid-rows-2 gap-3" ]
+        , div
+            [ Attr.css
+                [ Tw.grid
+                , Tw.grid_flow_row
+                , Tw.grid_cols_3
+                , Tw.grid_rows_2
+                , Tw.gap_3
+                ]
+            ]
             (Array.map viewDice dice |> Array.toList)
         ]
 
@@ -83,7 +108,13 @@ viewDiceCard dice =
 viewButton : Msg -> String -> Html Msg
 viewButton action label =
     button
-        [ class "bg-gray-300 px-6 py-2 rounded-full hover:bg-gray-500 hover:text-white hover:rounded-lg"
+        [ Attr.css
+            [ Tw.bg_gray_300
+            , Tw.px_6
+            , Tw.py_2
+            , Tw.rounded_full
+            , Css.hover [ Tw.bg_gray_500, Tw.text_white, Tw.rounded_lg ]
+            ]
         , onClick action
         ]
         [ text label ]
@@ -92,19 +123,44 @@ viewButton action label =
 viewCardTitle : String -> Html Msg
 viewCardTitle title =
     div
-        [ class "text-xl font-medium text-black" ]
+        [ Attr.css [ Tw.text_xl, Tw.font_medium, Tw.text_black ] ]
         [ p [] [ text title ] ]
 
 
 viewCard : List (Html Msg) -> Html Msg
 viewCard children =
-    div [ class "flex flex-col space-y-6 p-6 max-w-lg mx-auto bg-gray-100 rounded-xl shadow-md space-x-4" ]
+    div
+        [ Attr.css
+            [ Tw.flex
+            , Tw.flex_col
+            , Tw.space_y_6
+            , Tw.p_6
+            , Tw.max_w_lg
+            , Tw.mx_auto
+            , Tw.bg_gray_100
+            , Tw.rounded_xl
+            , Tw.shadow_md
+            , Tw.space_x_4
+            ]
+        ]
         children
 
 
 viewQuestion : Question -> Html Msg
 viewQuestion { categoryId, description } =
-    div [ class "flex flex-col space-y-6 p-6 max-w-lg mx-auto bg-white rounded-xl space-x-4" ]
+    div
+        [ Attr.css
+            [ Tw.flex
+            , Tw.flex_col
+            , Tw.space_y_6
+            , Tw.p_6
+            , Tw.max_w_lg
+            , Tw.mx_auto
+            , Tw.bg_white
+            , Tw.rounded_xl
+            , Tw.space_x_4
+            ]
+        ]
         [ p [] [ text categoryId ]
         , p [] [ text description ]
         ]
@@ -112,7 +168,7 @@ viewQuestion { categoryId, description } =
 
 viewQuestions : List Question -> Html Msg
 viewQuestions questions =
-    div [ class "flex flex-col space-y-6" ] <|
+    div [ Attr.css [ Tw.flex, Tw.flex_col, Tw.space_y_6 ] ] <|
         List.map viewQuestion questions
 
 
@@ -125,24 +181,30 @@ viewQuestionsCard questions =
         ]
 
 
-viewHome : { a | diceValues : Array Int, questions : List Question } -> Document Msg
-viewHome { diceValues, questions } =
+viewHomePage : { a | diceValues : Array Int, questions : List Question } -> Document Msg
+viewHomePage { diceValues, questions } =
     { title = "Elm Starter | Home"
     , body =
-        [ div
-            [ class "p-20 space-y-4" ]
-            [ viewDiceCard diceValues
-            , viewQuestionsCard questions
-            ]
+        [ Html.toUnstyled <|
+            div
+                [ Attr.css [ Tw.p_20, Tw.space_y_4 ] ]
+                [ Css.Global.global Tw.globalStyles
+                , viewDiceCard diceValues
+                , viewQuestionsCard questions
+                ]
         ]
     }
 
 
-viewNotFound : Document Msg
-viewNotFound =
+viewNotFoundPage : Document Msg
+viewNotFoundPage =
     { title = "Elm Starter | Not Found"
     , body =
-        [ text "Not Found"
+        [ Html.toUnstyled <|
+            div []
+                [ Css.Global.global Tw.globalStyles
+                , text "Not Found"
+                ]
         ]
     }
 
