@@ -1,10 +1,5 @@
 module Main exposing (Model, Msg(..), init, main, update, view)
 
--- import Html.Styled as Html
--- import Html.Styled.Attributes as Attr
--- import Tailwind.Breakpoints as Breakpoints
--- import Html exposing (Html, button, div, p, text)
-
 import Array exposing (Array)
 import Browser exposing (Document)
 import Browser.Navigation as Navigation exposing (Key)
@@ -18,6 +13,7 @@ import Json.Decode exposing (Decoder)
 import Random exposing (Generator)
 import Random.Array
 import Tailwind.Utilities as Tw
+import TestVisualizer as TestVis
 import Url exposing (Url)
 import Url.Parser as Parser exposing ((</>), Parser)
 
@@ -36,6 +32,7 @@ type alias Question =
 type alias Model =
     { page : Maybe Page
     , key : Key
+    , testModel : TestVis.TvModel
     , diceValues : Array Int
     , questions : List Question
     }
@@ -56,10 +53,14 @@ type Route
 type Msg
     = LinkClicked Browser.UrlRequest
     | UrlChanged Url
+      --
     | RollDice
     | DiceRolled (Array Int)
+      --
     | FetchJson
     | JsonFetched (Result Http.Error (List Question))
+      --
+    | TestVisualizerMsg TestVis.TvMsg
 
 
 view : Model -> Document Msg
@@ -133,9 +134,9 @@ viewCard children =
         [ Attr.css
             [ Tw.flex
             , Tw.flex_col
+            , Tw.m_3
             , Tw.space_y_6
             , Tw.p_6
-            , Tw.max_w_lg
             , Tw.mx_auto
             , Tw.bg_gray_100
             , Tw.rounded_xl
@@ -181,14 +182,20 @@ viewQuestionsCard questions =
         ]
 
 
+viewTestCard : Html Msg
+viewTestCard =
+    viewCard [ TestVis.view |> Html.map TestVisualizerMsg ]
+
+
 viewHomePage : { a | diceValues : Array Int, questions : List Question } -> Document Msg
 viewHomePage { diceValues, questions } =
     { title = "Elm Starter | Home"
     , body =
         [ Html.toUnstyled <|
             div
-                [ Attr.css [ Tw.p_20, Tw.space_y_4 ] ]
+                [ Attr.css [ Tw.flex, Tw.flex_wrap ] ]
                 [ Css.Global.global Tw.globalStyles
+                , viewTestCard
                 , viewDiceCard diceValues
                 , viewQuestionsCard questions
                 ]
@@ -276,6 +283,16 @@ update msg model =
         JsonFetched result ->
             ( handleJsonResult model result, Cmd.none )
 
+        TestVisualizerMsg tvMsg ->
+            toTestVis model (TestVis.update tvMsg model.testModel)
+
+
+toTestVis : Model -> ( TestVis.TvModel, Cmd TestVis.TvMsg ) -> ( Model, Cmd Msg )
+toTestVis model ( tvModel, cmd ) =
+    ( { model | testModel = tvModel }
+    , Cmd.map TestVisualizerMsg cmd
+    )
+
 
 updateUrl : Url -> Model -> ( Model, Cmd Msg )
 updateUrl url model =
@@ -301,6 +318,7 @@ init _ url key =
         , key = key
         , diceValues = Array.initialize 6 ((+) 1)
         , questions = []
+        , testModel = TestVis.initialModel
         }
 
 
